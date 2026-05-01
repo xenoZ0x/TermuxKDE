@@ -316,7 +316,8 @@ show_summary() {
   echo -e "${DIM}⚠ TermuxKDE-Remove will delete all project files & packages${RESET}"
   echo -e "${DIM}────────────────────────────────────${RESET}"
   echo -e "${BOLD}<3 Enjoy Your KDE — xenoZ0x${RESET}"
-  export PATH="$HOME/bin:$PATH"
+  chmod +x $HOME/bin/*
+  export PATH="$HOME/bin:$PATH" 
 }
 
 # ── Main ──────────────────────────────────────────
