@@ -249,7 +249,7 @@ rm -f "$HOME/bin/startplasma" "$HOME/bin/stoplasma" "$HOME/bin/TermuxKDE-Remove"
 task_done "Scripts removed"
 
 task      "Cleaning shell config"  "Stripping TermuxKDE block from ${RC_FILE}..."
-sed -i '/# ── TermuxKDE ──/,+10d' "$RC_FILE" 2>/dev/null \
+sed -i '/# ── TermuxKDE ──/,+11d' "$RC_FILE" 2>/dev/null \
   || error "Failed to clean shell config"
 task_done "Shell config cleaned"
 
@@ -272,6 +272,41 @@ task_done "Log removed"
 echo ""
 echo -e "${GREEN}${BOLD}TermuxKDE has been fully removed.${RESET}"
 EOF
+  
+  # ── Finalizing scripts ──
+  chmod +x "$HOME/bin/startplasma" "$HOME/bin/stoplasma" "$HOME/bin/TermuxKDE-Remove"
+  export PATH="$HOME/bin:$PATH"
+  success "Launcher scripts created"
+
+  # ── Check for duplicate before writing to RC ──
+  if grep -q "# ── TermuxKDE ──" "$RC_FILE" 2>/dev/null; then
+    info "TermuxKDE entries already exist in ${RC_FILE} — skipping"
+  else
+    cat >> "$RC_FILE" << 'RCEOF'
+
+# ── TermuxKDE ──
+export PATH="$HOME/bin:$PATH"
+echo -e "\033[1m\033[36m"
+echo "  ╔══════════════════════════╗"
+echo "  ║       TermuxKDE          ║"
+echo "  ╠══════════════════════════╣"
+echo "  ║  startplasma  → Start    ║"
+echo "  ║  stoplasma    → Stop     ║"
+echo "  ╠══════════════════════════╣"
+echo -e "  ║  \033[0m\033[1m\033[31mTermuxKDE-Remove\033[0m\033[1m\033[36m → Uninstall ║"
+echo "  ╚══════════════════════════╝"
+echo -e "\033[0m\033[2m  ⚠ TermuxKDE-Remove will delete everything\033[0m"
+RCEOF
+    success "MOTD written to ${RC_FILE}"
+  fi
+
+  info "Activating config"
+  detail "Running source on ${RC_FILE}..."
+  # shellcheck disable=SC1090
+  source "$RC_FILE" > /dev/null 2>&1
+  success "Config activated (${SHELL_NAME})"
+}
+
 }
 # ── Cache Cleanup ─────────────────────────────────
 cleanup_cache() {
@@ -314,8 +349,6 @@ show_summary() {
   echo -e "${DIM}⚠ TermuxKDE-Remove will delete all project files & packages${RESET}"
   echo -e "${DIM}────────────────────────────────────${RESET}"
   echo -e "${BOLD}<3 Enjoy Your KDE — xenoZ0x${RESET}"
-  chmod +x $HOME/bin/*
-  export PATH="$HOME/bin:$PATH" 
 }
 
 # ── Main ──────────────────────────────────────────
