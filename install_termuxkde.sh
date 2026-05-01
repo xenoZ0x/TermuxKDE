@@ -273,40 +273,8 @@ task_done "Log removed"
 
 echo ""
 echo -e "${GREEN}${BOLD}TermuxKDE has been fully removed.${RESET}"
-echo -e "${DIM}Restart Termux to apply changes.${RESET}"
 EOF
-
-  chmod +x "$HOME/bin/startplasma" "$HOME/bin/stoplasma" "$HOME/bin/TermuxKDE-Remove"
-  echo -e "${GREEN}[✓]${RESET} Launcher scripts created"
-
-  # ── Check for duplicate before writing to RC ──
-  if grep -q "# ── TermuxKDE ──" "$RC_FILE" 2>/dev/null; then
-    info "TermuxKDE entries already exist in ${RC_FILE} — skipping"
-  else
-    cat >> "$RC_FILE" << 'RCEOF'
-
-# ── TermuxKDE ──
-export PATH="$HOME/bin:$PATH"
-echo -e "\033[1m\033[36m"
-echo "  ╔══════════════════════════╗"
-echo "  ║       TermuxKDE          ║"
-echo "  ╠══════════════════════════╣"
-echo "  ║  startplasma  → Start    ║"
-echo "  ║  stoplasma    → Stop     ║"
-echo "  ╠══════════════════════════╣"
-echo -e "  ║  \033[0m\033[1m\033[31mTermuxKDE-Remove\033[0m\033[1m\033[36m → Uninstall ║"
-echo "  ╚══════════════════════════╝"
-echo -e "\033[0m\033[2m  ⚠ TermuxKDE-Remove will delete everything\033[0m"
-RCEOF
-    echo -e "${GREEN}[✓]${RESET} MOTD written to ${RC_FILE}"
-  fi
-
-  task     "Activating config"  "Running source on ${RC_FILE}..."
-  # shellcheck disable=SC1090
-  source "$RC_FILE" > /dev/null 2>&1
-  task_done "Config activated (${SHELL_NAME})"
 }
-
 # ── Cache Cleanup ─────────────────────────────────
 cleanup_cache() {
   step "Cleanup"
