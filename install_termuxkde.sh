@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ════════════════════════════════════════════════
-#   TermuxKDE Installer — by xenoZ0x (c) 2026
+#   TermuxKDE Installer — by 0xNullGun (c) 2026
 # ════════════════════════════════════════════════
 
 LOG="$HOME/termuxkde_error.log"
@@ -105,7 +105,7 @@ show_banner() {
   echo "     ██║   ███████╗██║  ██║██║ ╚═╝ ██║╚██████╔╝██╔╝ ██╗██║  ██╗██████╔╝███████╗"
   echo "     ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝"
   echo -e "${RESET}"
-  echo -e "${YELLOW}KDE Plasma for Termux${RESET} ${DIM}by xenoZ0x (c) 2026${RESET}"
+  echo -e "${YELLOW}KDE Plasma for Termux${RESET} ${DIM}by 0xNullGun (c) 2026${RESET}"
 }
 
 # ── Confirmation ──────────────────────────────────
@@ -348,7 +348,7 @@ show_summary() {
   echo -e "${RED}TermuxKDE-Remove${RESET}   →  Uninstall everything"
   echo -e "${DIM}⚠ TermuxKDE-Remove will delete all project files & packages${RESET}"
   echo -e "${DIM}────────────────────────────────────${RESET}"
-  echo -e "${BOLD}<3 Enjoy Your KDE — xenoZ0x${RESET}"
+  echo -e "${BOLD}<3 Enjoy Your KDE — 0xNullGun${RESET}"
 }
 
 # ── Main ──────────────────────────────────────────
