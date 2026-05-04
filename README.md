@@ -70,7 +70,7 @@ If it's too small, **pinch-zoom out** on the Termux keyboard to shrink the font 
 apt install ncurses-utils
 
 # 2. Run the script
-curl -s https://raw.githubusercontent.com/zenoZ0x/TermuxKDE/refs/heads/master/install_termuxkde.sh | bash
+curl -s https://raw.githubusercontent.com/0xNullGun/TermuxKDE/refs/heads/master/install_termuxkde.sh | bash
 
 ```
 
