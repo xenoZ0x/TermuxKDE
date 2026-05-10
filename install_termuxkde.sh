@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ════════════════════════════════════════════════
-#   TermuxKDE Installer — by xenoZ0x (c) 2026
+#   TermuxKDE Installer — by 0xNullGun (c) 2026
 # ════════════════════════════════════════════════
 
 LOG="$HOME/termuxkde_error.log"
@@ -38,10 +38,10 @@ task_done() {
 # error "Failure label"   (rewrites pending line with [✗], then exits)
 error() {
   if [[ -n "$_task_label" ]]; then
-    printf "\033[2A\r\033[2K${RED}[✗]${RESET} %b${DIM} — Run this command for details: cat ~/termuxkde_error.log${RESET}\n\r\033[2K" "$1"
+    printf "\033[2A\r\033[2K${RED}[✗]${RESET} %b${DIM} — cat ~/termuxkde_error.log${RESET}\n\r\033[2K" "$1"
     _task_label=""
   else
-    echo -e "${RED}[✗]${RESET} $1${DIM} — Run this command for details: cat ~/termuxkde_error.log${RESET}"
+    echo -e "${RED}[✗]${RESET} $1${DIM} — cat ~/termuxkde_error.log${RESET}"
   fi
   exit 1
 }
@@ -105,7 +105,7 @@ show_banner() {
   echo "     ██║   ███████╗██║  ██║██║ ╚═╝ ██║╚██████╔╝██╔╝ ██╗██║  ██╗██████╔╝███████╗"
   echo "     ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝"
   echo -e "${RESET}"
-  echo -e "${YELLOW}KDE Plasma for Termux${RESET} ${DIM}by xenoZ0x (c) 2026${RESET}"
+  echo -e "${YELLOW}KDE Plasma for Termux${RESET} ${DIM}by 0xNullGun (c) 2026${RESET}"
 }
 
 # ── Confirmation ──────────────────────────────────
@@ -202,6 +202,8 @@ YELLOW='\033[1;33m'
 BOLD='\033[1m'
 DIM='\033[2m'
 RESET='\033[0m'
+LOG="$HOME/termuxkde_error.log"
+> "$LOG"
 
 echo -e "${BOLD}${RED}"
 echo "  ╔══════════════════════════════════════════╗"
@@ -234,10 +236,10 @@ task()      { _task_label="$1"; echo -e "\033[36m[*]\033[0m $1"; echo -e "\033[2
 task_done() { printf "\033[2A\r\033[2K\033[32m[✓]\033[0m %b\n\r\033[2K" "$1"; _task_label=""; }
 error()     {
   if [[ -n "$_task_label" ]]; then
-    printf "\033[2A\r\033[2K\033[31m[✗]\033[0m %b\033[2m — check output above\033[0m\n\r\033[2K" "$1"
+    printf "\033[2A\r\033[2K\033[31m[✗]\033[0m %b\033[2m — cat ~/termuxkde_error.log\033[0m\n\r\033[2K" "$1"
     _task_label=""
   else
-    echo -e "\033[31m[✗]\033[0m $1"
+    echo -e "\033[31m[✗]\033[0m $1\033[2m — cat ~/termuxkde_error.log\033[0m"
   fi
   echo -e "\033[2mUninstall may be incomplete. Some steps were skipped.\033[0m"
   exit 1
@@ -245,38 +247,40 @@ error()     {
 
 task      "Removing launcher scripts"  "Deleting startplasma, stoplasma, TermuxKDE-Remove..."
 rm -f "$HOME/bin/startplasma" "$HOME/bin/stoplasma" "$HOME/bin/TermuxKDE-Remove" \
-  || error "Failed to remove launcher scripts"
+  >> "$LOG" 2>&1 || error "Failed to remove launcher scripts"
 task_done "Scripts removed"
 
 task      "Cleaning shell config"  "Stripping TermuxKDE block from ${RC_FILE}..."
-sed -i '/# ── TermuxKDE ──/,+11d' "$RC_FILE" 2>/dev/null \
+sed -i '/# ── TermuxKDE ──/,+11d' "$RC_FILE" >> "$LOG" 2>&1 \
   || error "Failed to clean shell config"
 task_done "Shell config cleaned"
 
 task      "Uninstalling KDE packages"  "Removing plasma, kde-applications, termux-x11-nightly..."
 DEBIAN_FRONTEND=noninteractive yes | pkg uninstall -y \
-  kde-applications plasma termux-x11-nightly > /dev/null 2>&1 \
+  kde-applications plasma termux-x11-nightly >> "$LOG" 2>&1 \
   || error "Failed to uninstall KDE packages"
 task_done "Packages removed"
 
 task      "Removing remaining dependencies"  "Running autoremove to clean up leftover packages..."
-DEBIAN_FRONTEND=noninteractive yes | pkg autoremove > /dev/null 2>&1 \
+DEBIAN_FRONTEND=noninteractive yes | pkg autoremove >> "$LOG" 2>&1 \
   || error "Failed to autoremove packages"
 task_done "Dependencies cleaned up"
 
 task      "Removing log file"  "Deleting termuxkde_error.log..."
 rm -f "$HOME/termuxkde_error.log" \
-  || error "Failed to remove log file"
+  >> "$LOG" 2>&1 || error "Failed to remove log file"
 task_done "Log removed"
 
 echo ""
 echo -e "${GREEN}${BOLD}TermuxKDE has been fully removed.${RESET}"
 EOF
-  
+
   # ── Finalizing scripts ──
-  chmod +x "$HOME/bin/startplasma" "$HOME/bin/stoplasma" "$HOME/bin/TermuxKDE-Remove"
+  task "Finalizing scripts" "Setting permissions and updating PATH..."
+  chmod +x "$HOME/bin/startplasma" "$HOME/bin/stoplasma" "$HOME/bin/TermuxKDE-Remove" \
+    || error "Failed to set script permissions"
   export PATH="$HOME/bin:$PATH"
-  success "Launcher scripts created"
+  task_done "Launcher scripts created"
 
   # ── Check for duplicate before writing to RC ──
   if grep -q "# ── TermuxKDE ──" "$RC_FILE" 2>/dev/null; then
@@ -297,17 +301,15 @@ echo -e "  ║  \033[0m\033[1m\033[31mTermuxKDE-Remove\033[0m\033[1m\033[36m →
 echo "  ╚══════════════════════════╝"
 echo -e "\033[0m\033[2m  ⚠ TermuxKDE-Remove will delete everything\033[0m"
 RCEOF
-    success "MOTD written to ${RC_FILE}"
+    info "MOTD written to ${RC_FILE}"
   fi
 
-  info "Activating config"
-  detail "Running source on ${RC_FILE}..."
+  task "Activating config" "Running source on ${RC_FILE}..."
   # shellcheck disable=SC1090
   source "$RC_FILE" > /dev/null 2>&1
-  success "Config activated (${SHELL_NAME})"
+  task_done "Config activated (${SHELL_NAME})"
 }
 
-}
 # ── Cache Cleanup ─────────────────────────────────
 cleanup_cache() {
   step "Cleanup"
@@ -348,7 +350,7 @@ show_summary() {
   echo -e "${RED}TermuxKDE-Remove${RESET}   →  Uninstall everything"
   echo -e "${DIM}⚠ TermuxKDE-Remove will delete all project files & packages${RESET}"
   echo -e "${DIM}────────────────────────────────────${RESET}"
-  echo -e "${BOLD}<3 Enjoy Your KDE — xenoZ0x${RESET}"
+  echo -e "${BOLD}<3 Enjoy Your KDE — 0xNullGun${RESET}"
 }
 
 # ── Main ──────────────────────────────────────────
