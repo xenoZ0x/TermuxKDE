@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Termux-000000?style=flat-square&logo=android&logoColor=white)](https://termux.dev/)
 [![Desktop](https://img.shields.io/badge/Desktop-KDE%20Plasma-1d99f3?style=flat-square&logo=kde&logoColor=white)](https://kde.org/plasma-desktop/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
-[![Author](https://img.shields.io/badge/by-0xNullGun-ff6b6b?style=flat-square)](https://github.com/0xNullGun)
+[![Author](https://img.shields.io/badge/by-ARMOND-ff6b6b?style=flat-square)](https://github.com/armond0x)
 
 </div>
 
@@ -171,7 +171,7 @@ TermuxKDE/
 ## ✦ License
 
 ```
-Copyright (c) 2026 0xNullGun. All Rights Reserved.
+Copyright (c) 2026 ARMOND. All Rights Reserved.
 Released under the MIT License.
 ```
 
@@ -179,7 +179,7 @@ Released under the MIT License.
 
 <div align="center">
 
-Made with ❤️ by **0xNullGun**
+Made with ❤️ by **ARMOND**
 
 *If this helped you, drop a ⭐ — it means a lot.*
 
